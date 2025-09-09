@@ -21,7 +21,7 @@
         
         <a href="{{ $news->source_url }}" target="_blank" class="back-link">
             &larr; อ่านข่าวต้นฉบับ
-        </a>
+        </a>                                        
 
     </article>
 

@@ -12,9 +12,8 @@ class NewsController extends Controller
      */
     public function index()
     {
-        // ดึงข่าวล่าสุดมาแสดง 15 ข่าว (ปรับแก้ตัวเลขได้ตามต้องการ)
         $all_news = News::latest()->take(15)->get();
-        return view('news.index', ['all_news' => $all_news]);
+        return view('news.index', compact('all_news'));
     }
 
     /**
@@ -23,12 +22,71 @@ class NewsController extends Controller
     public function show($id)
     {
         $news = News::findOrFail($id);
-        // ดึงข่าวอื่นๆ มา 4 ข่าว เพื่อแสดงใน sidebar
         $other_news = News::where('id', '!=', $id)->latest()->take(4)->get();
 
-        return view('news.show', [
-            'news' => $news,
-            'other_news' => $other_news
+        return view('news.show', compact('news', 'other_news'));
+    }
+
+    /**
+     * แสดงฟอร์มเพิ่มข่าวใหม่
+     */
+    public function create()
+    {
+        return view('news.create');
+    }
+
+    /**
+     * บันทึกข่าวใหม่
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title'        => 'required|string|max:255',
+            'content'      => 'required|string',
+            'image_url'    => 'required|url',
+            'published_at' => 'required|date',
         ]);
+
+        News::create($request->all());
+
+        return redirect()->route('news.index')->with('success', 'เพิ่มข่าวสำเร็จ');
+    }
+
+    /**
+     * แสดงฟอร์มแก้ไขข่าว
+     */
+    public function edit($id)
+    {
+        $news = News::findOrFail($id);
+        return view('news.edit', compact('news'));
+    }
+
+    /**
+     * อัปเดตข่าว
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'title'        => 'required|string|max:255',
+            'content'      => 'required|string',
+            'image_url'    => 'required|url',
+            'published_at' => 'required|date',
+        ]);
+
+        $news = News::findOrFail($id);
+        $news->update($request->all());
+
+        return redirect()->route('news.index')->with('success', 'แก้ไขข่าวสำเร็จ');
+    }
+
+    /**
+     * ลบข่าว
+     */
+    public function destroy($id)
+    {
+        $news = News::findOrFail($id);
+        $news->delete();
+
+        return redirect()->route('news.index')->with('success', 'ลบข่าวสำเร็จ');
     }
 }

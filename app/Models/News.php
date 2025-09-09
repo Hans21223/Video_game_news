@@ -1,7 +1,5 @@
 <?php
 
-// app/Models/News.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,15 +9,14 @@ class News extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'title',
         'content',
         'image_url',
         'published_at',
+    ];
+
+    protected $casts = [
+        'published_at' => 'datetime',
     ];
 }
